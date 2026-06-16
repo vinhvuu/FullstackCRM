@@ -1,0 +1,52 @@
+---
+description: Project-wide coding rules for AI agents
+globs: *
+---
+
+# Project Rules
+
+## General
+- Always explain before making large changes.
+- Prefer small, safe changes.
+- Do not rewrite unrelated files.
+- Keep existing folder structure unless explicitly asked.
+- Use TypeScript strictly on frontend.
+- Do not use `any` unless absolutely necessary.
+
+## Backend rules
+- Business logic stays in `services/`.
+- Route handlers should be thin (parse request, delegate to service, return response).
+- Keep database queries in `repositories/`.
+- Validate input using validator middleware.
+- Return consistent JSON error responses: `{ error: { code, message, details? } }`.
+
+## Frontend rules
+- Use reusable components (keep in `components/`).
+- Keep API calls in `lib/` (e.g., `lib/api.ts` or `lib/services/`).
+- Keep TypeScript types in `types/`.
+- Do not put business logic inside UI components.
+- Use Tailwind CSS for styling; avoid inline styles.
+- Follow Next.js App Router conventions.
+
+## Database rules
+- Never drop tables without confirmation.
+- Write clear, versioned migrations.
+- Prefer explicit relationships and indexes.
+- Keep seed data in `server/src/db/seed.sql`.
+
+## Testing rules
+- Add/update tests when changing logic.
+- Do not remove existing tests unless they are obsolete.
+- Test error cases, not just happy paths.
+
+## Communication
+- After completing a task, summarize:
+  - Files changed
+  - What was implemented
+  - How to test
+  - Any remaining issues
+
+## Workflow
+- When starting a task, first read: `docs/PROJECT_BRIEF.md`, `docs/ARCHITECTURE.md`, `docs/PLAN.md`
+- Only implement the phase specified in the task.
+- If a task is too large, ask to split it.
