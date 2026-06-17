@@ -1,34 +1,35 @@
+// src/iam/audit/entities/audit-log.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('iam_audit_logs')
 export class IamAuditLog {
-  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bigint', unsigned: true, nullable: true })
-  user_id: number | null;
+  @Column({ name: 'user_id', nullable: true })
+  userId: number | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  user_name: string | null;
+  @Column({ name: 'user_name', nullable: true })
+  userName: string | null;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column()
   action: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  entity_type: string;
+  @Column({ name: 'entity_type' })
+  entityType: string;
 
-  @Column({ type: 'bigint', unsigned: true, nullable: true })
-  entity_id: number | null;
+  @Column({ name: 'entity_id', nullable: true })
+  entityId: number | null;
 
   @Column({ type: 'json', nullable: true })
-  details: Record<string, any> | null;
+  details: { before?: any; after?: any; meta?: any } | null;
 
-  @Column({ type: 'varchar', length: 45, nullable: true })
-  ip_address: string | null;
+  @Column({ name: 'ip_address', nullable: true })
+  ipAddress: string | null;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  user_agent: string | null;
+  @Column({ name: 'user_agent', nullable: true })
+  userAgent: string | null;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 }
