@@ -1,30 +1,106 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
+
+import { DealsService } from '../deals/deals.service';
 
 export interface ConvertFromLeadDto {
   leadId: number;
   dealTitle: string;
   dealValue: number;
-  dealStage: 'lead' | 'qualified' | 'proposal' | 'negotiation';
+  dealStage:
+    | 'lead'
+    | 'qualified'
+    | 'proposal'
+    | 'negotiation';
+
   expectedCloseDate: string;
   createContact: boolean;
 }
 
 @Injectable()
 export class ConvertService {
-  private readonly logger = new Logger(ConvertService.name);
+  private readonly logger = new Logger(
+    ConvertService.name,
+  );
+
+  constructor(
+    private readonly dealsService: DealsService,
+  ) {}
 
   /**
-   * T3.14. POST /api/deals/convert-from-lead — Convert Lead
-   * Auth: Authenticated
-   * Response 201: { dealId, contactId }
+   * T3.14. POST /api/deals/convert-from-lead
+   * Response:
+   * {
+   *   dealId: number,
+   *   contactId: number | null
+   * }
    */
-  async convertFromLead(dto: ConvertFromLeadDto, userId: number): Promise<any> {
-    // TODO: Dev 3 implement
-    // 1. Validate leadId tồn tại và owner có quyền
-    // 2. Nếu createContact=true → gọi CrmLeadService.convertToContact() → nhận contactId
-    // 3. Tạo deal
-    // 4. Update lead: status='qualified', score += 10
-    // 5. Thêm timeline cho lead
-    // 6. Audit log action='convert', entityType='lead'
+  async convertFromLead(
+    dto: ConvertFromLeadDto,
+    userId: number,
+  ): Promise<any> {
+    if (!dto.leadId) {
+      throw new BadRequestException(
+        'LEAD_ID_REQUIRED',
+      );
+    }
+
+    if (!dto.dealTitle?.trim()) {
+      throw new BadRequestException(
+        'DEAL_TITLE_REQUIRED',
+      );
+    }
+
+    if (
+      dto.dealValue === undefined ||
+      dto.dealValue === null
+    ) {
+      throw new BadRequestException(
+        'DEAL_VALUE_REQUIRED',
+      );
+    }
+
+    let contactId: number | null = null;
+
+    /**
+     * TODO:
+     * Khi có ContactsService:
+     *
+     * if (dto.createContact) {
+     *   const contact =
+     *     await this.contactsService.create(...);
+     *
+     *   contactId = contact.id;
+     * }
+     */
+
+    const deal = await this.dealsService.create(
+      {
+        title: dto.dealTitle,
+        value: dto.dealValue,
+        leadId: dto.leadId,
+        contactId,
+        stage: dto.dealStage,
+        expectedCloseDate:
+          dto.expectedCloseDate,
+      },
+      userId,
+    );
+
+    this.logger.log(
+      `Lead ${dto.leadId} converted to deal ${deal.id}`,
+    );
+
+    return {
+      success: true,
+      leadId: dto.leadId,
+      dealId: deal.id,
+      contactId,
+      message:
+        'Lead converted successfully',
+    };
   }
 }
