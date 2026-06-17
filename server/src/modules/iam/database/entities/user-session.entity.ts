@@ -1,28 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+// src/iam/users/entities/user-session.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('iam_user_sessions')
 export class IamUserSession {
-  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bigint', unsigned: true })
-  user_id: number;
+  @Column({ name: 'user_id' })
+  userId: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  refresh_token_hash: string;
+  @Column({ name: 'refresh_token_hash' })
+  refreshTokenHash: string;
 
-  @Column({ type: 'datetime' })
-  expires_at: Date;
+  @Column({ name: 'expires_at' })
+  expiresAt: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name: 'user_agent', nullable: true })
+  userAgent: string;
+
+  @Column({ name: 'ip_address', nullable: true })
+  ipAddress: string;
+
+  @Column({ default: false })
   revoked: boolean;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  user_agent: string | null;
-
-  @Column({ type: 'varchar', length: 45, nullable: true })
-  ip_address: string | null;
-
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 }

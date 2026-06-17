@@ -1,31 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+// src/iam/invitations/entities/invitation.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('iam_invitations')
 export class IamInvitation {
-  @PrimaryGeneratedColumn({ type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column()
   email: string;
 
-  @Column({ type: 'bigint', unsigned: true })
-  invited_by: number;
-
-  @Column({ type: 'enum', enum: ['admin', 'user'] })
+  @Column()
   role: 'admin' | 'user';
 
-  @Column({ type: 'varchar', length: 64 })
-  token: string;
+  @Column({ name: 'token_hash' })
+  tokenHash: string;
 
-  @Column({ type: 'enum', enum: ['pending', 'accepted', 'expired', 'revoked'], default: 'pending' })
+  @Column({ name: 'expires_at' })
+  expiresAt: Date;
+
+  @Column({ default: 'pending' })
   status: 'pending' | 'accepted' | 'expired' | 'revoked';
 
-  @Column({ type: 'datetime' })
-  expires_at: Date;
+  @Column({ name: 'invited_by' })
+  invitedBy: number;
 
-  @Column({ type: 'datetime', nullable: true })
-  accepted_at: Date | null;
+  @Column({ name: 'accepted_at', nullable: true })
+  acceptedAt: Date;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 }
